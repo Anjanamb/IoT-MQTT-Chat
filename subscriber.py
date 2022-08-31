@@ -1,7 +1,7 @@
 
 import paho.mqtt.client as mqtt
 
-broker = 'pldindustries.com'
+broker = 'broker.hivemq.com'
 port = 1883
 username = 'app_client'
 password = 'app@1234'

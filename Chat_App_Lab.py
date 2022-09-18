@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import messagebox
 import json
 
-broker = 'pldindustries.com'
+broker = 'broker.hivemq.com'
 port = 1883
 username = 'app_client'
 password = 'app@1234'
@@ -58,14 +58,20 @@ def connect():
         global client_id, topic
         client_id = entName.get()
         topic = entTopic.get()
+        
+        # Connect to the Mqtt broker
+        # Subscribe to the given topic
+        client = paho.Client(client_id)
+        client.username_pw_set(username, password)
+        client.on_message = receive_msg
+        client.connect(broker)
+        client.subscribe(topic)
+        client.loop_start()
+
         entName.config(state=tk.DISABLED)
         entTopic.config(state=tk.DISABLED)
         btnConnect.config(state=tk.DISABLED)
         tkMessage.config(state=tk.NORMAL)
-
-        # Connect to the Mqtt broker
-        # Subscribe to the given topic
-
 
 def receive_msg(client, userdata, message):
     msg = message.payload.decode("utf-8")
@@ -73,13 +79,24 @@ def receive_msg(client, userdata, message):
     # update the display when msg is recived
     # Use following function to update display of the GUI
     # update_display(""Name"", "Msg to send")
+    data = json.loads(msg)
+    update_display(data["Name"], data["msg"])
 
 
 def getChatMessage(msg):
     msg = msg.replace('\n', '')
 
     # Use this function to publish msg when msg is enterd from GUI
-
+    data_send = {}
+    data_send["Name"] = client_id
+    data_send["msg"] = msg
+    json_object = json.dumps(data_send)
+    client.publish(topic, json_object, qos=2, retain=False)
+    tkMessage.delete('1.0', tk.END)
+    if msg == "exit":
+        client.close()
+        window.destroy()
+    # print("Sending message")
 
 def update_display(name, msg):
     texts = tkDisplay.get("1.0", tk.END).strip()

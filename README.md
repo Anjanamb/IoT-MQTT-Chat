@@ -3,8 +3,6 @@
 > A lightweight IoT-based **chat application** implemented in Python using **MQTT (paho-mqtt)** and **Tkinter**.  
 This project demonstrates real-time publish/subscribe messaging with a GUI chat client as well as simple CLI publisher/subscriber examples.  
 
-Originally developed as a Semester 6B IoT lab project.
-
 ---
 
 ## Features
